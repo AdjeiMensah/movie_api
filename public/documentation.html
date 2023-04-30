@@ -1,10 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	<title>Movie API Documentation</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
 </head>
 <body>
-	<h1>Movie API</h1>
-	<p>Welcome to the Movie API documentation. This API provides users with access to information about different movies, directors, and genres. Users can search for movies, retrieve movie details, and add new movies to the database. The API is built using JavaScript, Node.js, Express, and MongoDB.</p>
+    <h1>API Documentation</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Request Method</th>
+                <th>URL Endpoint</th>
+                <th>Description</th>
+                <th>Query Parameters</th>
+                <th>Data Expected in Request Body</th>
+                <th>Response</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>GET</td>
+                <td>/movies</td>
+                <td>Get a list of all movies.</td>
+                <td>-</td>
+                <td>-</td>
+                <td>Array of movie objects</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/movies/:title</td>
+                <td>Get data about a single movie by title.</td>
+                <td>title</td>
+                <td>-</td>
+                <td>Movie object</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/movies/genres/:name</td>
+                <td>Get data about a genre by name/title.</td>
+                <td>name</td>
+                <td>-</td>
+                <td>Genre object</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/movies/directors/:directorName</td>
+                <td>Get data about a director by name.</td>
+                <td>directorName</td>
+                <td>-</td>
+                <td>Director object</td>
+            </tr>
+			<tr>
+				<td>POST</td>
+				<td>/user</td>
+				<td>Register a new user.</td>
+				<td>-</td>
+				<td>{ "name": "johndoe" }</td>
+				<td>New user object</td>
+			</tr>			
+            <tr>
+                <td>PUT</td>
+                <td>/user/:id</td>
+                <td>Update user info (username) by user ID.</td>
+                <td>id</td>
+                <td>{ "name": "newusername" }</td>
+                <td>Updated user object</td>
+            </tr>
+            <tr>
+                <td>POST</td>
+                <td>/user/:id/:movietitle</td>
+                <td>Add a movie to the user's list of favorites by user ID and movie title.</td>
+                <td>id, movietitle</td>
+                <td>-</td>
+                <td>Text confirmation</td>
+            </tr>
+            <tr>
+                <td>DELETE</td>
+                <td>/users/:id</td>
+                <td>Remove a user by user ID.</td>
+                <td>id</td>
+                <td>-</td>
+                <td>Text confirmation</td>
+            </tr>
+        </tbody>
+    </table>
 </body>
 </html>
