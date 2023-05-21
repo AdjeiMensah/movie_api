@@ -66,39 +66,32 @@
                 <td>-</td>
                 <td>Director object</td>
             </tr>
-			<tr>
-				<td>POST</td>
-				<td>/user</td>
-				<td>Register a new user.</td>
-				<td>-</td>
-				<td>{ "name": "johndoe" }</td>
-				<td>New user object</td>
-			</tr>			
+            <tr>
+                <td>POST</td>
+                <td>/users</td>
+                <td>Register a new user.</td>
+                <td>-</td>
+                <td>{"name": "John Doe"}</td>
+                <td>New user object</td>
+            </tr>
+            <tr>
+                <td>GET</td>
+                <td>/users/:userId</td>
+                <td>Get data about a single user by user ID.</td>
+                <td>userId</td>
+                <td>-</td>
+                <td>User object</td>
+            </tr>
             <tr>
                 <td>PUT</td>
-                <td>/user/:id</td>
-                <td>Update user info (username) by user ID.</td>
-                <td>id</td>
-                <td>{ "name": "newusername" }</td>
+                <td>/users/:userId</td>
+                <td>Update user info (name) by user ID.</td>
+                <td>userId</td>
+                <td>{"name": "New Name"}</td>
                 <td>Updated user object</td>
             </tr>
             <tr>
                 <td>POST</td>
-                <td>/user/:id/:movietitle</td>
-                <td>Add a movie to the user's list of favorites by user ID and movie title.</td>
-                <td>id, movietitle</td>
-                <td>-</td>
-                <td>Text confirmation</td>
-            </tr>
-            <tr>
-                <td>DELETE</td>
-                <td>/users/:id</td>
-                <td>Remove a user by user ID.</td>
-                <td>id</td>
-                <td>-</td>
-                <td>Text confirmation</td>
-            </tr>
-        </tbody>
-    </table>
-</body>
-</html>
+                <td>/users/:userId/favorites/:movieId</td>
+                <td>Add a movie to the user's list of favorites by user ID and movie ID.</td>
+            
