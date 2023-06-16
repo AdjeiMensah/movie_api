@@ -1,23 +1,33 @@
 const bodyParser = require('body-parser');
 const express = require('express');
+const app = express();
+const router = express.Router();
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const Models = require('./models.js');
-
-const app = express();
+const passport = require('passport');
 
 const Movie = Models.Movie;
 const User = Models.User;
 
+// External middleware
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('common'));
 
-// User routes
+// Passport middleware and setup
+require('./passport');
+
+// Here use the passport middleware
+app.use(passport.initialize());
+
+require('./auth.js')(router); // Now, router is defined and 'auth' is setting up the routes
+
+
 
 // User routes
 
-app.post('/users', (req, res) => {
+app.post('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
   const newUser = req.body;
 
   User.create(newUser)
@@ -30,7 +40,7 @@ app.post('/users', (req, res) => {
     });
 });
 
-app.get('/users/:userId', (req, res) => {
+app.get('/users/:userId', passport.authenticate('jwt', { session: false }), (req, res) => {
   const userId = req.params.userId;
 
   User.findById(userId)
@@ -46,7 +56,7 @@ app.get('/users/:userId', (req, res) => {
       res.status(500).send('Internal Server Error');
     });
 });
-app.put('/users/:userId', (req, res) => {
+app.put('/users/:userId', passport.authenticate('jwt', { session: false }), (req, res) => {
   let userId = req.params.userId;
   
   // Remove newline character from the user ID
@@ -68,7 +78,7 @@ app.put('/users/:userId', (req, res) => {
     });
 });
 
-app.post('/users/:userId/favorites/:movieId', (req, res) => {
+app.post('/users/:userId/favorites/:movieId', passport.authenticate('jwt', { session: false }), (req, res) => {
   const { userId, movieId } = req.params;
 
   User.findByIdAndUpdate(userId, { $addToSet: { favoriteMovies: movieId } }, { new: true })
@@ -85,7 +95,7 @@ app.post('/users/:userId/favorites/:movieId', (req, res) => {
     });
 });
 
-app.delete('/users/:userId/favorites/:movieId', (req, res) => {
+app.delete('/users/:userId/favorites/:movieId', passport.authenticate('jwt', { session: false }), (req, res) => {
   const { userId, movieId } = req.params;
 
   User.findByIdAndUpdate(userId, { $pull: { favoriteMovies: movieId } }, { new: true })
@@ -102,7 +112,7 @@ app.delete('/users/:userId/favorites/:movieId', (req, res) => {
     });
 });
 
-app.delete('/users/:userId', (req, res) => {
+app.delete('/users/:userId', passport.authenticate('jwt', { session: false }), (req, res) => {
   let userId = req.params.userId;
   
   // Remove newline character from the user ID
@@ -124,7 +134,7 @@ app.delete('/users/:userId', (req, res) => {
 
 // Movie routes
 
-app.get('/movies', (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
   Movie.find()
     .then(movies => res.status(200).json(movies))
     .catch(error => {
@@ -133,7 +143,8 @@ app.get('/movies', (req, res) => {
     });
 });
 
-app.get('/movies/:title', (req, res) => {
+
+app.get('/movies/:title', passport.authenticate('jwt', { session: false }), (req, res) => {
   const title = req.params.title;
 
   Movie.findOne({ title: title })
@@ -150,7 +161,7 @@ app.get('/movies/:title', (req, res) => {
     });
 });
 
-app.get('/movies/genres/:name', (req, res) => {
+app.get('/movies/genres/:name', passport.authenticate('jwt', { session: false }), (req, res) => {
   const name = req.params.name;
 
   Movie.find({ 'genre.name': name })
@@ -168,7 +179,7 @@ app.get('/movies/genres/:name', (req, res) => {
     });
 });
 
-app.get('/movies/directors/:directorName', (req, res) => {
+app.get('/movies/directors/:directorName', passport.authenticate('jwt', { session: false }), (req, res) => {
   const directorName = req.params.directorName;
 
   Movie.findOne({ 'director.name': directorName })
@@ -197,6 +208,7 @@ app.use((err, req, res, next) => {
   console.log('Error message:', err.message);
   res.status(500).send('Something broke');
 });
+app.use('/', router);
 
 // Start the server
 
