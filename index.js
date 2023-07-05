@@ -27,7 +27,7 @@ require('./auth.js')(router); // Now, router is defined and 'auth' is setting up
 
 // User routes
 
-app.post('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
+app.post('/users', (req, res) => {
   const newUser = req.body;
 
   User.create(newUser)
@@ -147,7 +147,7 @@ app.get('/movies', passport.authenticate('jwt', { session: false }), (req, res) 
 app.get('/movies/:title', passport.authenticate('jwt', { session: false }), (req, res) => {
   const title = req.params.title;
 
-  Movie.findOne({ title: title })
+  Movie.findOne({ Title: title })  // changed "title" to "Title"
     .then(movie => {
       if (movie) {
         res.status(200).json(movie);
@@ -160,14 +160,13 @@ app.get('/movies/:title', passport.authenticate('jwt', { session: false }), (req
       res.status(500).send('Internal Server Error');
     });
 });
-
 app.get('/movies/genres/:name', passport.authenticate('jwt', { session: false }), (req, res) => {
   const name = req.params.name;
 
-  Movie.find({ 'genre.name': name })
+  Movie.find({ 'Genre.Name': name })
     .then(movies => {
       if (movies.length > 0) {
-        const genreDescription = movies[0].genre.description;
+        const genreDescription = movies[0].Genre.Description;
         res.status(200).json({ description: genreDescription });
       } else {
         res.status(404).send('Genre not found');
@@ -179,20 +178,16 @@ app.get('/movies/genres/:name', passport.authenticate('jwt', { session: false })
     });
 });
 
-app.get('/movies/directors/:directorName', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+app.get('/movies/directors/:directorName/movies', passport.authenticate('jwt', { session: false }), (req, res) => {
   const directorName = req.params.directorName;
 
-  Movie.findOne({ 'director.name': directorName })
-    .then(movie => {
-      if (movie) {
-        const director = movie.director;
-        res.status(200).json({
-          bio: director.bio,
-          birthYear: director.birthYear,
-          deathYear: director.deathYear || 'N/A'
-        });
+  Movie.find({ 'Director.Name': directorName })
+    .then(movies => {
+      if (movies.length > 0) {
+        res.status(200).json(movies);
       } else {
-        res.status(404).send('Director not found');
+        res.status(404).send('No movies found for this director');
       }
     })
     .catch(error => {
