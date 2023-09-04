@@ -6,9 +6,18 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 const Models = require('./models.js');
 const passport = require('passport');
+const { body, validationResult } = require('express-validator');
+
 
 const Movie = Models.Movie;
 const User = Models.User;
+
+// Set up CORS
+const cors = require('cors');
+app.use(cors());
+
+
+
 
 // External middleware
 app.use(bodyParser.json());
@@ -27,7 +36,25 @@ require('./auth.js')(router); // Now, router is defined and 'auth' is setting up
 
 // User routes
 
-app.post('/users', (req, res) => {
+app.post('/users', [
+  // Check if the 'username' field is a string and is not empty
+  body('username').isString().withMessage('Username must be a string').notEmpty().withMessage('Username is required'),
+
+  // Check if the 'password' field is at least 5 characters long
+  body('password').isLength({ min: 5 }).withMessage('Password must be at least 5 characters long'),
+
+  // Check if the 'email' field is a valid email
+  body('email').isEmail().withMessage('Email is not valid')
+], (req, res) => {
+  
+  // Gather the validation results
+  const errors = validationResult(req);
+  
+  // If there are validation errors, respond with a 400 status and the error messages
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const newUser = req.body;
 
   User.create(newUser)
