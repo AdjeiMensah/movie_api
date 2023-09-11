@@ -240,11 +240,10 @@ app.listen(port, '0.0.0.0',() => {
 });
 
 // Connect to MongoDB
-
-  mongoose.connect('mongodb://localhost:27017/cfDB', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.CONNECTION_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB Atlas');
   })
   .catch(error => {
-    console.error('Error connecting to MongoDB:', error);
+    console.error('Error connecting to MongoDB Atlas:', error);
   });
